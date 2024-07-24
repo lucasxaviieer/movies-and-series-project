@@ -1,5 +1,6 @@
 package student.edu.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,12 +20,19 @@ public class User {
     @Column(length = 200, nullable = false)
     private String name;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
+    @JsonIgnore
     private List<Movie> movies;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
+    @JsonIgnore
+//    @JoinTable(name = "tb_user_serie",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "serie_id")
+//    )
     private List<Serie> series;
+
 }

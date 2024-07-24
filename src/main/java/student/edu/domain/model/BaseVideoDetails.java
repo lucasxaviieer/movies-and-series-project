@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,5 +26,12 @@ public abstract class BaseVideoDetails {
     @Column(nullable = false, name = "yearValue")
     private Integer year;
 
+    public BaseVideoDetails() {
+    }
 
+    public BaseVideoDetails(String title, Integer year) {
+        this.id = null;
+        this.title = title;
+        this.year = year;
+    }
 }
