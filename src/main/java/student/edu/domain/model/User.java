@@ -23,9 +23,10 @@ public class User {
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "tb_user_movie" , joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "movieId"))
     @JsonIgnore
-    private List<Movie> movies;
+    private List<Movie> movies = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
