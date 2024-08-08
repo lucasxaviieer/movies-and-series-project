@@ -25,10 +25,8 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "tb_user_movie" , joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "movieId"))
-    @JsonIgnore
     private List<Movie> movies = new ArrayList<>();
 
-    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "tb_user_serie", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "serie_id"))
     private List<Serie> series = new ArrayList<>();

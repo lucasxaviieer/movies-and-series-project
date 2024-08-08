@@ -1,0 +1,57 @@
+-- Criação da tabela tb_movie
+CREATE TABLE tb_movie (
+    year_value INTEGER NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(300) NOT NULL
+);
+
+-- Criação da tabela tb_serie
+CREATE TABLE tb_serie (
+    seasons INTEGER NOT NULL,
+    year_value INTEGER NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(300) NOT NULL
+);
+
+-- Criação da tabela tb_user
+CREATE TABLE tb_user (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL
+);
+
+-- Criação da tabela tb_user_movie
+CREATE TABLE tb_user_movie (
+    movie_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL
+);
+
+-- Criação da tabela tb_user_serie
+CREATE TABLE tb_user_serie (
+    serie_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL
+);
+
+-- Alteração da tabela tb_user_movie para adicionar chave estrangeira movie_id
+ALTER TABLE tb_user_movie
+    ADD CONSTRAINT FKvlcf310fmco0xja8adwe3v0x
+    FOREIGN KEY (movie_id)
+    REFERENCES tb_movie (id);
+
+-- Alteração da tabela tb_user_movie para adicionar chave estrangeira user_id
+ALTER TABLE tb_user_movie
+    ADD CONSTRAINT FK830qb3ngl24mga8ps6q3dnk89
+    FOREIGN KEY (user_id)
+    REFERENCES tb_user (id);
+
+-- Alteração da tabela tb_user_serie para adicionar chave estrangeira serie_id
+ALTER TABLE tb_user_serie
+    ADD CONSTRAINT FK2g1sq3nv3jpt8jppw5f0j1mge
+    FOREIGN KEY (serie_id)
+    REFERENCES tb_serie (id);
+
+-- Alteração da tabela tb_user_serie para adicionar chave estrangeira user_id
+ALTER TABLE tb_user_serie
+    ADD CONSTRAINT FKa5luv785y86633pj2k2smqxj6
+    FOREIGN KEY (user_id)
+    REFERENCES tb_user (id);
