@@ -63,4 +63,17 @@ public class UserServiceImpl implements UserService {
         user.getMovies().add(movie);
         userRepository.save(user);
     }
+
+    @Override
+    public void removeSerie(Long userId, Long serieId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("This user ID do not exists!"));
+        Serie serieCheck = user.getSeries().stream().filter(x -> x.getId().equals(serieId)).findFirst().orElse(null);
+
+        if(serieCheck == null) {
+            throw new NoSuchElementException("This serie is not in user series list");
+        }
+
+        user.getSeries().remove(serieCheck);
+        userRepository.save(user);
+    }
 }

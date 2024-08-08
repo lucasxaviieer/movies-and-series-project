@@ -14,4 +14,6 @@ public interface UserService {
 
     void addMovie(Long userId, Long movieId);
 
+    void removeSerie(Long userId, Long serieId);
+
 }

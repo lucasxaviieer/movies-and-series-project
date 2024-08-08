@@ -44,4 +44,10 @@ public class UserController {
         userService.addMovie(userId, movieId);
         return ResponseEntity.ok("Movie added!");
     }
+
+    @PutMapping("removeSerie/{userId}/{serieId}")
+    public ResponseEntity<String> removeSerie(@PathVariable("userId") Long userId, @PathVariable("serieId") Long serieId){
+        userService.removeSerie(userId, serieId);
+        return ResponseEntity.ok("Serie removed from user list!");
+    }
 }
