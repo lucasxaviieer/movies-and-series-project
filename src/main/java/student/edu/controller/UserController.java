@@ -33,19 +33,19 @@ public class UserController {
         return ResponseEntity.created(location).body(user);
     }
 
-    @PutMapping("/addSerie/{userId}/{serieId}")
+    @PutMapping("/addSeries/{userId}/{serieId}")
     public ResponseEntity<String> addSerie(@PathVariable("userId") Long userId, @PathVariable("serieId") Long serieId){
         userService.addSerie(userId, serieId);
         return ResponseEntity.ok().body("Serie added!");
     }
 
-    @PutMapping("/addMovie/{userId}/{movieId}")
+    @PutMapping("/addMovies/{userId}/{movieId}")
      public ResponseEntity<String> addMovie(@PathVariable("userId") Long userId, @PathVariable("movieId") Long movieId){
         userService.addMovie(userId, movieId);
         return ResponseEntity.ok("Movie added!");
     }
 
-    @PutMapping("removeSerie/{userId}/{serieId}")
+    @PutMapping("removeSeries/{userId}/{serieId}")
     public ResponseEntity<String> removeSerie(@PathVariable("userId") Long userId, @PathVariable("serieId") Long serieId){
         userService.removeSerie(userId, serieId);
         return ResponseEntity.ok("Serie removed from user list!");
