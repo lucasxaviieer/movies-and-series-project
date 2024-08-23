@@ -2,6 +2,7 @@ package student.edu.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import student.edu.domain.model.Serie;
 import student.edu.domain.repository.SerieRepository;
 import student.edu.service.SerieService;
@@ -15,6 +16,7 @@ public class SerieServiceImpl implements SerieService {
     @Autowired
     private SerieRepository serieRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Serie> findAll() {
         List<Serie> series = serieRepository.findAll();
@@ -24,11 +26,13 @@ public class SerieServiceImpl implements SerieService {
         return series;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Serie findById(Long id) {
         return serieRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Resource ID not found!"));
     }
 
+    @Transactional
     @Override
     public Serie create(Serie serie) {
         serie = serieRepository.save(serie);

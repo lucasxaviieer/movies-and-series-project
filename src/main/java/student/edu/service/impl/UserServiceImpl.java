@@ -3,6 +3,7 @@ package student.edu.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import student.edu.domain.model.Movie;
 import student.edu.domain.model.Serie;
 import student.edu.domain.model.User;
@@ -25,11 +26,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private MovieRepository movieRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public User findById(Long id){
         return userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Resource ID not found!"));
     }
 
+    @Transactional
     @Override
     public User create(User user){
         if(userRepository.existsByEmail(user.getEmail())){
@@ -38,6 +41,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public void addSerie(Long userId, Long serieId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("This user ID do not exists!"));
@@ -51,6 +55,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public void addMovie(Long userId, Long movieId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("This user ID do not exists!"));
@@ -64,6 +69,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public void removeSerie(Long userId, Long serieId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("This user ID do not exists!"));
