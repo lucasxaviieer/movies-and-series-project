@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import student.edu.domain.model.User;
+import student.edu.dto.UserDto;
+import student.edu.dto.mapper.UserMapper;
 import student.edu.service.UserService;
 
 import java.net.URI;
@@ -17,20 +19,20 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id){
+    public ResponseEntity<UserDto> findById(@PathVariable Long id){
         User user = userService.findById(id);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(UserMapper.toDto(user));
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user){
-        user = userService.create(user);
+    public ResponseEntity<UserDto> create(@RequestBody UserDto userDto){
+        User user = userService.create(UserMapper.toUser(userDto));
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(user.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(user);
+        return ResponseEntity.created(location).body(UserMapper.toDto(user));
     }
 
     @PutMapping("/addSeries/{userId}/{serieId}")
