@@ -1,5 +1,6 @@
 package student.edu.controller.exceptions;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.ToString;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +21,9 @@ public class ErrorMessage {
     private int status;
     private String statusText;
     private String message;
+    private LocalDateTime timestramp;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> errors;
 
     public ErrorMessage(){}
@@ -31,6 +35,7 @@ public class ErrorMessage {
         this.status = status.value();
         this.statusText = status.getReasonPhrase();
         this.message = message;
+        this.timestramp = LocalDateTime.now().withNano(0);
 
     }
 
@@ -41,6 +46,7 @@ public class ErrorMessage {
         this.status = status.value();
         this.statusText = status.getReasonPhrase();
         this.message = message;
+        this.timestramp = LocalDateTime.now().withNano(0);
         addErrors(result);
     }
 
