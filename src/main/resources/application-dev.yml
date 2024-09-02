@@ -18,3 +18,10 @@ spring:
       settings:
         trace: false
         web-allow-others: false
+
+springdoc:
+  swagger-ui:
+    path: /movies-and-series.html
+  api-docs:
+    path: /movies-and-series
+  packages-to-scan: student.edu.controller
