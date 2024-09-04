@@ -1,5 +1,7 @@
 package student.edu.controller.exceptions;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -7,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -28,7 +31,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorMessage> handleBusinessException(IllegalArgumentException businessException, HttpServletRequest request){
         log.error("API ERROR - ", businessException);
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY,
+        return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(request, HttpStatus.CONFLICT,
                 businessException.getMessage()));
     }
 
@@ -47,11 +50,19 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorMessage> handleJsonParseException(HttpMessageNotReadableException ex, HttpServletRequest request){
+        log.error("ERROR API", ex);
+        return new ResponseEntity<>(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Invalid JSON structure"), HttpStatus.UNPROCESSABLE_ENTITY );
+    }
+
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorMessage> handleUnexpectedException(Throwable unexpectedException, HttpServletRequest request){
         var message = "Unexpected server error occurred, see the logs!";
         log.error(message, unexpectedException);
         return new ResponseEntity<>(new ErrorMessage(request, HttpStatus.INTERNAL_SERVER_ERROR, message), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 
 }
