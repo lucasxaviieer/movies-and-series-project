@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import student.edu.controller.exceptions.ErrorMessage;
+import student.edu.domain.model.Serie;
 import student.edu.domain.model.User;
 import student.edu.dto.UserDto;
 import student.edu.dto.mapper.UserMapper;
@@ -26,6 +27,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Operation(summary = "Find a user", description = "Resource to find a user by id", responses = {
+            @ApiResponse(responseCode = "200", description = "User found successfully", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> findById(@PathVariable Long id){
         User user = userService.findById(id);
@@ -40,7 +47,6 @@ public class UserController {
             @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data", content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorMessage.class)))
     })
-
     @PostMapping
     public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto userDto){
         User user = userService.create(UserMapper.toUser(userDto));

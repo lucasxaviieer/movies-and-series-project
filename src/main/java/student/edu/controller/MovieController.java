@@ -28,6 +28,12 @@ public class MovieController {
     @Autowired
     private MovieService movieService;
 
+    @Operation(summary = "Return all movies", description = "Get all movies registered", responses = {
+            @ApiResponse(responseCode = "200", description = "All movies returned", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Movie.class))),
+            @ApiResponse(responseCode = "404", description = "No one movies registered yet", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping
     public ResponseEntity<List<Movie>> findAll(){
         List<Movie> movies = movieService.findAll();
@@ -37,6 +43,12 @@ public class MovieController {
         return ResponseEntity.ok(movies);
     }
 
+    @Operation(summary = "Find a movie", description = "Resource to find a movie by id", responses = {
+            @ApiResponse(responseCode = "200", description = "Movie found successfully", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Movie.class))),
+            @ApiResponse(responseCode = "404", description = "Movie not found", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("{id}")
     public ResponseEntity<Movie> findById(@PathVariable Long id){
         Movie movie = movieService.findById(id);

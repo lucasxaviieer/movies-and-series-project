@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import student.edu.controller.exceptions.ErrorMessage;
+import student.edu.domain.model.Movie;
 import student.edu.domain.model.Serie;
 import student.edu.dto.SerieDto;
 import student.edu.dto.mapper.SerieMapper;
@@ -28,11 +29,22 @@ public class SerieController {
     @Autowired
     private SerieService serieService;
 
+    @Operation(summary = "Return all series", description = "Get all serie registered", responses = {
+            @ApiResponse(responseCode = "200", description = "All series returned", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Serie.class))),
+            @ApiResponse(responseCode = "404", description = "No one series registered yet", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping
     public ResponseEntity<List<Serie>> findAll(){
         return ResponseEntity.ok(serieService.findAll());
     }
-
+    @Operation(summary = "Find a serie", description = "Resource to find a serie by id", responses = {
+            @ApiResponse(responseCode = "200", description = "Serie found successfully", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Serie.class))),
+            @ApiResponse(responseCode = "404", description = "Serie not found", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Serie> findById(@PathVariable Long id){
         Serie serie = serieService.findById(id);
