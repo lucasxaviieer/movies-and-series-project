@@ -1,6 +1,7 @@
 package student.edu.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +32,7 @@ public class SerieController {
 
     @Operation(summary = "Return all series", description = "Get all serie registered", responses = {
             @ApiResponse(responseCode = "200", description = "All series returned", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Serie.class))),
+                   array = @ArraySchema(schema = @Schema(implementation = Serie.class)))),
             @ApiResponse(responseCode = "404", description = "No one series registered yet", content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorMessage.class)))
     })

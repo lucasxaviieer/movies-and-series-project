@@ -29,7 +29,7 @@ public class UserController {
 
     @Operation(summary = "Find a user", description = "Resource to find a user by id", responses = {
             @ApiResponse(responseCode = "200", description = "User found successfully", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UserDto.class))),
+                    schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorMessage.class)))
     })

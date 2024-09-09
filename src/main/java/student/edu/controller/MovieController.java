@@ -1,6 +1,7 @@
 package student.edu.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,7 +31,7 @@ public class MovieController {
 
     @Operation(summary = "Return all movies", description = "Get all movies registered", responses = {
             @ApiResponse(responseCode = "200", description = "All movies returned", content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = Movie.class))),
+                    array = @ArraySchema(schema = @Schema(implementation = Movie.class)))),
             @ApiResponse(responseCode = "404", description = "No one movies registered yet", content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = ErrorMessage.class)))
     })
