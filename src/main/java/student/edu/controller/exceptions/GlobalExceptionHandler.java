@@ -16,7 +16,10 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import student.edu.exception.SerieNotFoundException;
+import student.edu.exception.UserNotFoundException;
 
+import javax.print.attribute.standard.Media;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +38,18 @@ public class GlobalExceptionHandler {
                 businessException.getMessage()));
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ErrorMessage> handleNotFoundException(NoSuchElementException notFoundException, HttpServletRequest request){
-        log.error("API ERROR - ", notFoundException);
-        return new ResponseEntity<>(new ErrorMessage(request, HttpStatus.NOT_FOUND,  notFoundException.getMessage()), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest request){
+        log.error("API ERROR - ", ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(request,
+                HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler(SerieNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleNotFoundException(SerieNotFoundException ex, HttpServletRequest request){
+        log.error("API ERROR - ", ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(request,
+                HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import student.edu.domain.model.Serie;
 import student.edu.domain.repository.SerieRepository;
+import student.edu.exception.SerieNotFoundException;
 import student.edu.service.SerieService;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class SerieServiceImpl implements SerieService {
     public List<Serie> findAll() {
         List<Serie> series = serieRepository.findAll();
         if(series.isEmpty()) {
-            throw new NoSuchElementException("There are no one series registered!");
+            throw new SerieNotFoundException("There are no one series registered!");
         }
         return series;
     }
@@ -29,7 +30,7 @@ public class SerieServiceImpl implements SerieService {
     @Transactional(readOnly = true)
     @Override
     public Serie findById(Long id) {
-        return serieRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Resource ID not found!"));
+        return serieRepository.findById(id).orElseThrow(() -> new SerieNotFoundException("Resource ID not found!"));
     }
 
     @Transactional

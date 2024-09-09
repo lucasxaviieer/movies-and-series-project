@@ -7,11 +7,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import student.edu.controller.exceptions.ErrorMessage;
-import student.edu.domain.model.Serie;
 import student.edu.domain.model.User;
 import student.edu.dto.UserDto;
 import student.edu.dto.mapper.UserMapper;
@@ -34,9 +34,9 @@ public class UserController {
                     schema = @Schema(implementation = ErrorMessage.class)))
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> findById(@PathVariable Long id){
+    public ResponseEntity<User> findById(@PathVariable Long id){
         User user = userService.findById(id);
-        return ResponseEntity.ok(UserMapper.toDto(user));
+        return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "Insert an user", description = "Resource to create a new user", responses = {
@@ -58,21 +58,43 @@ public class UserController {
         return ResponseEntity.created(location).body(UserMapper.toDto(user));
     }
 
+    @Operation(summary = "Add a serie", description = "Add serie to an user series list", responses = {
+            @ApiResponse(responseCode = "204", description = "Serie added successfully", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "404", description = "User or Serie not found", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "409", description = "Serie has already been added", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @PutMapping("/addSeries/{userId}/{serieId}")
-    public ResponseEntity<String> addSerie(@PathVariable("userId") Long userId, @PathVariable("serieId") Long serieId){
+    public ResponseEntity<Void> addSerie(@PathVariable("userId") Long userId, @PathVariable("serieId") Long serieId){
         userService.addSerie(userId, serieId);
-        return ResponseEntity.ok().body("Serie added!");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @Operation(summary = "Add a movie", description = "Add a movie to an user movies list", responses = {
+            @ApiResponse(responseCode = "204", description = "Movie added successfully", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "404", description = "User or movie not found", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "409", description = "Movie has already been added", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @PutMapping("/addMovies/{userId}/{movieId}")
-     public ResponseEntity<String> addMovie(@PathVariable("userId") Long userId, @PathVariable("movieId") Long movieId){
+     public ResponseEntity<Void> addMovie(@PathVariable("userId") Long userId, @PathVariable("movieId") Long movieId){
         userService.addMovie(userId, movieId);
-        return ResponseEntity.ok("Movie added!");
+        return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Remove a serie from user", description = "Remove a serie from user series list",responses = {
+            @ApiResponse(responseCode = "204", description = "Serie removed successfully", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "404", description = "User do not exists or serie is not in user series list", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @PutMapping("removeSeries/{userId}/{serieId}")
-    public ResponseEntity<String> removeSerie(@PathVariable("userId") Long userId, @PathVariable("serieId") Long serieId){
+    public ResponseEntity<Void> removeSerie(@PathVariable("userId") Long userId, @PathVariable("serieId") Long serieId){
         userService.removeSerie(userId, serieId);
-        return ResponseEntity.ok("Serie removed from user list!");
+        return ResponseEntity.noContent().build();
     }
 }
