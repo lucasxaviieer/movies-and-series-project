@@ -1,0 +1,110 @@
+package student.edu;
+
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import student.edu.controller.exceptions.ErrorMessage;
+import student.edu.domain.model.User;
+import student.edu.dto.UserDto;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql(scripts = "/sql/users/users-insert.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "/sql/users/users-delete.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+public class UserIT {
+
+    @Autowired
+    WebTestClient testClient;
+
+    @Test
+    public void createUser_WithValidData_ReturnUserCreatedStatus201(){
+        UserDto responseBody = testClient.post().uri("/users").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserDto("Lucas Xavier", "lucas.lima.xaviier@gmail.com")).exchange().expectStatus().isCreated()
+                .expectBody(UserDto.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getEmail()).isNotNull();
+        Assertions.assertThat(responseBody.getEmail()).isEqualTo("lucas.lima.xaviier@gmail.com");
+        Assertions.assertThat(responseBody.getName()).isEqualTo("Lucas Xavier");
+    }
+
+
+    @Test
+    public void createUser_WithNameInvalid_ReturnErrorMessageStatus422(){
+        ErrorMessage responseBody = testClient.post().uri("/users").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserDto("", "lucas@gmail.com")).exchange().expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        responseBody = testClient.post().uri("/users").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserDto("    ", "lucas@gmail.com")).exchange().expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+    }
+
+    @Test
+    void createUser_WithEmailInvalid_ReturnErrorMessageStatus422(){
+        ErrorMessage responseBody = testClient.post().uri("/users").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserDto("Lucas Xavier", "lucas")).exchange().expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        responseBody = testClient.post().uri("/users").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserDto("Lucas Xavier", "lucas@")).exchange().expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        responseBody = testClient.post().uri("/users").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserDto("Lucas Xavier", "lucas@email.")).exchange().expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+    }
+
+    @Test
+    public void createUser_WithExistingEmail_ReturnErrorMessageStatus409(){
+        ErrorMessage responseBody = testClient.post().uri("/users").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserDto("Lucas Xavier", "lucas@gmail.com")).exchange().expectStatus().isEqualTo(409)
+                .expectBody(ErrorMessage.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
+    }
+
+    @Test
+    public void findUser_WithAnExistingId_ReturnUserStatus200(){
+        EntityExchangeResult<User> result = testClient.get().uri("/users/100").exchange().expectStatus()
+                .isOk().expectBody(User.class).returnResult();
+
+        var statusCode = result.getStatus().value();
+        Assertions.assertThat(statusCode).isEqualTo(200);
+
+        User responseBody = result.getResponseBody();
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getId()).isEqualTo(100);
+        Assertions.assertThat(responseBody.getEmail()).isEqualTo("lucas@gmail.com");
+    }
+
+    @Test
+    public void findUser_WithAnNotExistingId_ReturnErrorMessageStatus404(){
+        ErrorMessage responseBody = testClient.get().uri("/users/10").exchange().expectStatus()
+                .isNotFound().expectBody(ErrorMessage.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+    }
+}
