@@ -1,6 +1,7 @@
 package student.edu.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,6 +20,7 @@ import student.edu.dto.mapper.UserMapper;
 import student.edu.service.UserService;
 
 import java.net.URI;
+import java.util.List;
 
 @Tag(name = "Users", description = "All operations related to user, like insert, read and update.")
 @RestController
@@ -26,6 +29,18 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Operation(summary = "Get all users", description = "Resource to get all users registered", responses = {
+            @ApiResponse(responseCode = "200", description = "All users were returned successfully", content = @Content(mediaType = "application/json",
+            array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+            @ApiResponse(responseCode = "404", description = "No one user found in database", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorMessage.class)))
+    })
+    @GetMapping
+    public ResponseEntity<List<User>> findAll(){
+        List<User> users = userService.findAll();
+        return ResponseEntity.ok(users);
+    }
 
     @Operation(summary = "Find a user", description = "Resource to find a user by id", responses = {
             @ApiResponse(responseCode = "200", description = "User found successfully", content = @Content(mediaType = "application/json",

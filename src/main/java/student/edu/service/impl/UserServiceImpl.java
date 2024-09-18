@@ -14,6 +14,7 @@ import student.edu.exception.SerieNotFoundException;
 import student.edu.exception.UserNotFoundException;
 import student.edu.service.UserService;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -83,5 +84,14 @@ public class UserServiceImpl implements UserService {
 
         user.getSeries().remove(serieCheck);
         userRepository.save(user);
+    }
+
+    @Override
+    public List<User> findAll() {
+        List<User> users = userRepository.findAll();
+        if(users.isEmpty()){
+            throw new UserNotFoundException("No one user found in database");
+        }
+        return users;
     }
 }

@@ -3,6 +3,8 @@ package student.edu.service;
 
 import student.edu.domain.model.User;
 
+import java.util.List;
+
 
 public interface UserService {
 
@@ -16,4 +18,5 @@ public interface UserService {
 
     void removeSerie(Long userId, Long serieId);
 
+    List<User> findAll();
 }

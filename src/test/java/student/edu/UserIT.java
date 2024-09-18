@@ -12,6 +12,8 @@ import student.edu.controller.exceptions.ErrorMessage;
 import student.edu.domain.model.User;
 import student.edu.dto.UserDto;
 
+import java.util.List;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "/sql/users/users-insert.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "/sql/users/users-delete.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -103,6 +105,27 @@ public class UserIT {
     public void findUser_WithAnNotExistingId_ReturnErrorMessageStatus404(){
         ErrorMessage responseBody = testClient.get().uri("/users/10").exchange().expectStatus()
                 .isNotFound().expectBody(ErrorMessage.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    public void findAllUser_WithDataInDataBase_ReturnListUserWithStatus200(){
+        List<User> responseBody = testClient.get().uri("/users").exchange().expectStatus().isOk()
+                .expectBodyList(User.class).returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody).isNotEmpty();
+        Assertions.assertThat(responseBody.size()).isEqualTo(3);
+
+    }
+
+    @Test
+    @Sql(scripts = "/sql/users/users-delete.sql")
+    public void findAllUser_WithNoDataInDataBase_ReturnErrorMessageWithStatus404(){
+        ErrorMessage responseBody = testClient.get().uri("/users").exchange().expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class).returnResult().getResponseBody();
 
         Assertions.assertThat(responseBody).isNotNull();
         Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
