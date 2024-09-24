@@ -16,6 +16,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import student.edu.exception.MovieNotFoundException;
 import student.edu.exception.SerieNotFoundException;
 import student.edu.exception.UserNotFoundException;
 
@@ -48,6 +49,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SerieNotFoundException.class)
     public ResponseEntity<ErrorMessage> handleNotFoundException(SerieNotFoundException ex, HttpServletRequest request){
         log.error("API ERROR - ", ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(request,
+                HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler(MovieNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleMovieNotFoundException(MovieNotFoundException ex, HttpServletRequest request){
+        log.error("API ERROR - ",ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(request,
                 HttpStatus.NOT_FOUND, ex.getMessage()));
     }

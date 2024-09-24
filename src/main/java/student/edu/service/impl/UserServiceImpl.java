@@ -10,6 +10,7 @@ import student.edu.domain.model.User;
 import student.edu.domain.repository.MovieRepository;
 import student.edu.domain.repository.SerieRepository;
 import student.edu.domain.repository.UserRepository;
+import student.edu.exception.MovieNotFoundException;
 import student.edu.exception.SerieNotFoundException;
 import student.edu.exception.UserNotFoundException;
 import student.edu.service.UserService;
@@ -62,11 +63,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addMovie(Long userId, Long movieId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("This user ID do not exists!"));
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new NoSuchElementException("This movie ID do not exists!"));
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("This movie ID do not exists!"));
 
         Movie movieCheck = user.getMovies().stream().filter(x -> x.getId().equals(movie.getId())).findFirst().orElse(null);
         if(movieCheck != null){
-            throw new IllegalArgumentException("This serie has already been added!");
+            throw new IllegalArgumentException("This movie has already been added!");
         }
         user.getMovies().add(movie);
         userRepository.save(user);
